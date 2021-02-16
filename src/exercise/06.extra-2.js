@@ -44,6 +44,18 @@ function useToggle({
     )
   }, [onIsControlled, hasOnChange, readOnly])
 
+  const {current: onWasControlled} = React.useRef(onIsControlled)
+  React.useEffect(() => {
+    warning(
+      !(onWasControlled && !onIsControlled),
+      'Warning: A component is changing a controlled input of type undefined to be uncontrolled. Input elements should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://fb.me/react-controlled-components',
+    )
+    warning(
+      !(!onWasControlled && onIsControlled),
+      'Warning: A component is changing an uncontrolled input of type undefined to be controlled. Input elements should not switch from uncontrolled to controlled (or vice versa). Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://fb.me/react-controlled-components',
+    )
+  }, [onWasControlled, onIsControlled])
+
   function dispatchWithOnChange(action) {
     if (!onIsControlled) dispatch(action)
     onChange?.(reducer({...state, on}, action), action)
